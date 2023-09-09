@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Check brackets application
+  description: |-
+    Приложение для проверки открывающихся и закрывающихся скобок.
+  version: 1.0.0
+servers:
+  - url: https://localhost:8080/api
+
+paths:
+  /checkBrackets:
+    post:
+      tags:
+        - Check brackets
+      description: Проверка скобок в тексте
+      operationId: checkBrackets
+      requestBody:
+        description: Схема тела запроса
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Text'
+      responses:
+        '200':
+          description: Успешная операция
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckingResult'
+        '400':
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    Text:
+      description: Текст для проверки
+      required:
+        - text
+      type: object
+      properties:
+        text:
+          type: string
+          pattern: ^(?!\s*$).+
+          maxLength: 2147483647
+          example: "Вчера я отправился в поход в лес (это мое любимое место для отдыха) вместе с друзьями. Мы выбрали маршрут, который проходил через горные потоки и поля (для разнообразия). В начале пути погода была отличной, солнце светило ярко, и птицы радостно пели. Однако, когда мы подошли ближе к вершине горы, небо стало покрываться облаками, (как будто природа готовила нам небольшой сюрприз). Несмотря на это, виды были захватывающими, особенно когда мы достигли высшей точки и увидели прекрасный вид на долину (я почувствовал, что все усилия стоили того)."
+    CheckingResult:
+      description: Ответ
+      required:
+        - isCorrect
+      type: object
+      properties:
+        isCorrect:
+          type: boolean
+          example: true
+    ErrorResponse:
+      description: Ошибка
+      required:
+        - status
+        - message
+      type: object
+      properties:
+        status:
+          type: string
+          pattern: .*
+          maxLength: 2147483647
+          example: "error"
+        message:
+          type: string
+          pattern: .*
+          maxLength: 2147483647
+          example: "Тело должно быть не пустым"
